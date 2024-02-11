@@ -1,7 +1,8 @@
 from rest_framework import routers
 from django.urls import path
 
-from materials.views.lesson import LessonListView, LessonCreateView, LessonUpdateView, LessonDetailView, LessonDeleteView
+from materials.views.lesson import LessonListView, LessonCreateView, LessonUpdateView, LessonDetailView, \
+    LessonDeleteView
 from materials.views.course import CourseViewSet
 
 router = routers.SimpleRouter()
