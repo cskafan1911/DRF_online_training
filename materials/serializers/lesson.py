@@ -2,7 +2,6 @@ from rest_framework import serializers
 from rest_framework.relations import SlugRelatedField
 
 from materials.models import Course, Lesson
-from materials.serializers.course import CourseDetailSerializer
 
 
 class LessonSerializer(serializers.ModelSerializer):
@@ -23,7 +22,7 @@ class LessonListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Lesson
-        fields = ('name', 'course_lesson',)
+        fields = '__all__'
 
 
 class LessonDetailSerializer(serializers.ModelSerializer):
