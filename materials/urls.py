@@ -1,9 +1,12 @@
 from rest_framework import routers
 from django.urls import path
 
+from materials.apps import MaterialsConfig
 from materials.views.lesson import LessonListView, LessonCreateView, LessonUpdateView, LessonDetailView, \
     LessonDeleteView
 from materials.views.course import CourseViewSet
+
+app_name = MaterialsConfig.name
 
 router = routers.SimpleRouter()
 router.register('course', CourseViewSet)
