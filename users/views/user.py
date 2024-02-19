@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, generics, status
 from rest_framework.filters import OrderingFilter
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 
+from materials.permissions import IsUserIsOwner, IsModerator
 from users.models import User, Payment
 from users.serializers.payment import PaymentSerializer
 from users.serializers.user import UserSerializer
@@ -25,21 +26,13 @@ class UserRegisterAPI(generics.CreateAPIView):
     """
     Класс дял создания пользователя.
     """
-    queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def post(self, request, *args, **kwargs):
-        """
-        Метод для регистрации нового пользователя.
-        """
-        serializer = UserSerializer(data=request.data)
-        if serializer.is_valid():
-            user = User.objects.create(
-                email=request.data['email'],
-            )
-            user.set_password(request.data['password'])
-            user.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        new_user = serializer.save()
+        password = serializer.data["password"]
+        new_user.set_password(password)
+        new_user.save()
 
 
 class UserDetailAPIView(generics.RetrieveAPIView):
@@ -49,7 +42,7 @@ class UserDetailAPIView(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
 
 
 class UserListAPIView(generics.ListAPIView):
@@ -59,6 +52,7 @@ class UserListAPIView(generics.ListAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
@@ -68,7 +62,13 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated, IsUserIsOwner]
+
+    def perform_update(self, serializer):
+        new_user = serializer.save()
+        password = serializer.data["password"]
+        new_user.set_password(password)
+        new_user.save()
 
 
 class UserDeleteAPIView(generics.DestroyAPIView):
@@ -78,4 +78,4 @@ class UserDeleteAPIView(generics.DestroyAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = [IsAuthenticated]

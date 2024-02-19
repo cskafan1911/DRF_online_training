@@ -2,7 +2,7 @@ from rest_framework import serializers
 from rest_framework.fields import SerializerMethodField
 
 from materials.models import Course, Lesson
-from materials.serializers.lesson import LessonListSerializer
+from materials.serializers.lesson import LessonSerializer
 
 
 class CourseSerializer(serializers.ModelSerializer):
@@ -22,7 +22,7 @@ class CourseSerializer(serializers.ModelSerializer):
         """
         Метод получает список уроков курса.
         """
-        return LessonListSerializer(Lesson.objects.filter(course_lesson=course), many=True).data
+        return LessonSerializer(Lesson.objects.filter(course_lesson=course), many=True).data
 
     class Meta:
         model = Course

@@ -12,7 +12,7 @@ class IsUserIsOwner(permissions.BasePermission):
         """
         Метод для проверки, является ли пользователь владельцем контента.
         """
-        return obj.user == request.user
+        return obj.owner == request.user
 
 
 class IsModerator(permissions.BasePermission):

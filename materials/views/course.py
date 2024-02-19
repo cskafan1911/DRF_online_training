@@ -16,19 +16,24 @@ class CourseViewSet(ModelViewSet):
 
     def get_permissions(self):
         """
-        Метод для
+        Метод ограничивает права доступа.
         """
-        if self.action in ['create', 'retrieve_delete']:
-            self.permission_classes = [IsAuthenticated, IsUserIsOwner, IsModerator]
-        else:
-            self.permission_classes = [IsAuthenticated, IsUserIsOwner | IsModerator]
+        if self.action == 'create':
+            self.permission_classes = [IsAuthenticated, ~IsModerator]
+        elif self.action == 'list':
+            self.permission_classes = [IsAuthenticated, IsModerator, IsUserIsOwner]
+        elif self.action == 'retrieve':
+            self.permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
+        elif self.action == 'update':
+            self.permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
+        elif self.action == 'partial_update':
+            self.permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
+        elif self.action == 'destroy':
+            self.permission_classes = [IsAuthenticated, IsUserIsOwner]
+
         return [permission() for permission in self.permission_classes]
 
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def get_queryset(self):
-        if self.queryset.filter(owner=self.request.user).exists():
-            return Course.objects.filter(owner=self.request.user)
-        elif self.request.user.is_superuser or self.request.user.groups.filter(name='moderator').exists():
-            return self.queryset
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()

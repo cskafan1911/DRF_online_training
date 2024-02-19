@@ -12,26 +12,3 @@ class LessonSerializer(serializers.ModelSerializer):
     class Meta:
         model = Lesson
         fields = '__all__'
-
-
-class LessonListSerializer(serializers.ModelSerializer):
-    """
-    Класс сериализатор для списка уроков.
-    """
-    course_lesson = SlugRelatedField(slug_field='name', queryset=Course.objects.all())
-
-    class Meta:
-        model = Lesson
-        fields = '__all__'
-
-
-class LessonDetailSerializer(serializers.ModelSerializer):
-    """
-    Класс сериализатор для списка уроков.
-    """
-
-    course_lesson = SlugRelatedField(slug_field='name', queryset=Course.objects.all())
-
-    class Meta:
-        model = Lesson
-        fields = '__all__'
