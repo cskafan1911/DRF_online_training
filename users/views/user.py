@@ -45,7 +45,7 @@ class UserDetailAPIView(generics.RetrieveAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
+    permission_classes = [IsAuthenticated, IsModerator]
 
 
 class UserListAPIView(generics.ListAPIView):
@@ -55,7 +55,7 @@ class UserListAPIView(generics.ListAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser | IsModerator]
 
 
 class UserUpdateAPIView(generics.UpdateAPIView):
@@ -65,7 +65,7 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated, IsUserIsOwner]
+    permission_classes = [IsAuthenticated]
 
     def perform_update(self, serializer):
         """
