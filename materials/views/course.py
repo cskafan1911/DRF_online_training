@@ -34,6 +34,9 @@ class CourseViewSet(ModelViewSet):
         return [permission() for permission in self.permission_classes]
 
     def perform_create(self, serializer):
+        """
+        Метод для привязки создателя и курса.
+        """
         course = serializer.save()
         course.owner = self.request.user
         course.save()

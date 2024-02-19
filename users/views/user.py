@@ -29,6 +29,9 @@ class UserRegisterAPI(generics.CreateAPIView):
     serializer_class = UserSerializer
 
     def perform_create(self, serializer):
+        """
+        Метод шифрует пароль пользователя.
+        """
         new_user = serializer.save()
         password = serializer.data["password"]
         new_user.set_password(password)
@@ -65,6 +68,9 @@ class UserUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated, IsUserIsOwner]
 
     def perform_update(self, serializer):
+        """
+        Метод шифрует пароль пользователя.
+        """
         new_user = serializer.save()
         password = serializer.data["password"]
         new_user.set_password(password)
