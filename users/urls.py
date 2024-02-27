@@ -9,7 +9,7 @@ from users.views.user import UserRegisterAPI, UserDetailAPIView, UserUpdateAPIVi
 app_name = UsersConfig.name
 
 router = routers.DefaultRouter()
-router.register('payment', PaymentViewSet, basename='payment')
+router.register(r'payment', PaymentViewSet, basename='payment')
 
 urlpatterns = [
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),

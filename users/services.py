@@ -6,9 +6,11 @@ stripe.api_key = os.getenv('STRIPE_API_KEY')
 
 def create_product_price(amount, product_name):
     """
-    Функция для создания продукта покупки.
+    Функция для получения цены продукта.
     """
-    stripe_price = stripe.Product.create(
+    stripe.Product.create(name=product_name)
+
+    stripe_price = stripe.Price.create(
         currency='rub',
         unit_amount=amount * 100,
         product_data={'name': product_name},
@@ -20,10 +22,12 @@ def create_session(price):
     """
     Функция для создания сессии покупки.
     """
-    session = stripe.checkout.Session.create(
+    stripe_session = stripe.checkout.Session.create(
         success_url='http://localhost:8000/materials/',
-        line_items=[{'price': price, 'quantity': 1}],
+        line_items=[{
+            'price': price, 'quantity': 1
+        }],
         mode='payment',
     )
 
-    return session
+    return stripe_session
