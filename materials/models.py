@@ -12,6 +12,8 @@ class Course(models.Model):
     description = models.TextField(verbose_name='Описание', blank=True, null=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
 
+    price = models.PositiveIntegerField(default=15000, verbose_name='Цена')
+
     def __str__(self):
         """
         Строковое представление модели Course.
@@ -37,6 +39,8 @@ class Lesson(models.Model):
     course_lesson = models.ForeignKey(Course, on_delete=models.SET_NULL, related_name='course_lesson',
                                       verbose_name='Курс', null=True)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, blank=True, null=True)
+
+    price = models.PositiveIntegerField(default=5000, verbose_name='Цена')
 
     def __str__(self):
         """
