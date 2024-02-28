@@ -8,12 +8,12 @@ def create_product_price(amount, product_name):
     """
     Функция для получения цены продукта.
     """
-    stripe.Product.create(name=product_name)
+    product = stripe.Product.create(name=product_name)
 
     stripe_price = stripe.Price.create(
         currency='rub',
         unit_amount=amount * 100,
-        product_data={'name': product_name},
+        product_data={'name': product},
     )
     return stripe_price
 
