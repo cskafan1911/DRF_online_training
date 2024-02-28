@@ -1,7 +1,10 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from materials.models import Lesson
-from materials.serializers.lesson import LessonSerializer, LessonListSerializer, LessonDetailSerializer
+from materials.paginators import MaterialsPaginator
+from materials.permissions import IsModerator, IsUserIsOwner
+from materials.serializers.lesson import LessonSerializer
 
 
 class LessonListView(ListAPIView):
@@ -9,8 +12,10 @@ class LessonListView(ListAPIView):
     Класс для получения списка уроков.
     """
 
+    serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    serializer_class = LessonListSerializer
+    pagination_class = MaterialsPaginator
+    permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
 
 
 class LessonDetailView(RetrieveAPIView):
@@ -19,7 +24,8 @@ class LessonDetailView(RetrieveAPIView):
     """
 
     queryset = Lesson.objects.all()
-    serializer_class = LessonDetailSerializer
+    serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
 
 
 class LessonCreateView(CreateAPIView):
@@ -27,8 +33,16 @@ class LessonCreateView(CreateAPIView):
     Класс для создания урока.
     """
 
-    queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, ~IsModerator]
+
+    def perform_create(self, serializer):
+        """
+        Метод для привязки создателя и урока.
+        """
+        lesson = serializer.save()
+        lesson.owner = self.request.user
+        lesson.save()
 
 
 class LessonUpdateView(UpdateAPIView):
@@ -38,6 +52,7 @@ class LessonUpdateView(UpdateAPIView):
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, IsModerator | IsUserIsOwner]
 
 
 class LessonDeleteView(DestroyAPIView):
@@ -47,3 +62,4 @@ class LessonDeleteView(DestroyAPIView):
 
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = [IsAuthenticated, IsUserIsOwner]
