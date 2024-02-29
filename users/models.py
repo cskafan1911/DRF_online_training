@@ -43,6 +43,7 @@ class Payment(models.Model):
     method = models.CharField(max_length=100, verbose_name='Способ оплаты', choices=PAYMENT_METHOD, default=CARD,
                               blank=True, null=True)
 
+    product_id = models.CharField(max_length=200, verbose_name='id продукта', blank=True, null=True)
     pay_url = models.URLField(max_length=500, verbose_name='Ссылка для оплаты', blank=True, null=True)
     session_id = models.CharField(max_length=500, verbose_name='Номер сессии', blank=True, null=True)
 

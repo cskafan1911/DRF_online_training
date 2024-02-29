@@ -4,17 +4,26 @@ import os
 stripe.api_key = os.getenv('STRIPE_API_KEY')
 
 
-def create_product_price(amount, product_name):
+def create_product(product_name):
+    """
+    Функция для создания продукта.
+    """
+    product = stripe.Product.create(name=product_name)
+
+    return product
+
+
+def create_product_price(amount, product):
     """
     Функция для получения цены продукта.
     """
-    product = stripe.Product.create(name=product_name)
 
     stripe_price = stripe.Price.create(
         currency='rub',
         unit_amount=amount * 100,
         product_data={'name': product},
     )
+
     return stripe_price
 
 

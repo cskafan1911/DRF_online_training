@@ -9,7 +9,7 @@ from rest_framework import status
 from materials.models import Course
 from users.models import Payment
 from users.serializers.payment import PaymentSerializer
-from users.services import create_product_price, create_session
+from users.services import create_product_price, create_session, create_product
 
 
 class PaymentViewSet(ModelViewSet):
@@ -29,8 +29,11 @@ class PaymentViewSet(ModelViewSet):
         product = get_object_or_404(Course, pk=request.data.get('course'))
 
         if product:
-            price = create_product_price(product.price, product.name)
+            product_stripe = create_product(product.name)
+            print(product_stripe)
+            price = create_product_price(product.price, product_stripe)
             session = create_session(price)
+            product_id = product_stripe.id
             session_id = session.id
             session_url = session.url
             payment = Payment.objects.create(
@@ -38,6 +41,7 @@ class PaymentViewSet(ModelViewSet):
                 course=product,
                 lesson=request.data.get('lesson'),
                 payment_amount=product.price,
+                product_id=product_id,
                 session_id=session_id,
                 pay_url=session_url,
             )
