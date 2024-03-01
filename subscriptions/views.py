@@ -41,6 +41,10 @@ class SubscriptionListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+
+        if self.request.user.is_superuser:
+            return Subscription.objects.all()
+
         return Subscription.objects.filter(user=self.request.user)
 
 

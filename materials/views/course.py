@@ -5,6 +5,8 @@ from materials.models import Course
 from materials.paginators import MaterialsPaginator
 from materials.permissions import IsUserIsOwner, IsModerator
 from materials.serializers.course import CourseSerializer
+from materials.tasks import send_mail_for_subscriptions
+from subscriptions.models import Subscription
 
 
 class CourseViewSet(ModelViewSet):
@@ -42,3 +44,15 @@ class CourseViewSet(ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        """
+        Метод при обновлении курса запускает задачу оповещения всех подписчиков курса.
+        """
+        course = serializer.save()
+        subscriptions = Subscription.objects.filter(course=course.pk)
+
+        if subscriptions:
+
+            for sub in subscriptions:
+                send_mail_for_subscriptions(sub)
