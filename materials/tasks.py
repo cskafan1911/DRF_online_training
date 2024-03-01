@@ -7,6 +7,10 @@ from subscriptions.models import Subscription
 
 @shared_task
 def send_mail_for_subscriptions(pk):
+    """
+    Функция для отложенного старта рассылки почтовых сообщений подписчикам, после изменений в курсе.
+    """
+
     subscriptions = Subscription.objects.filter(course=pk)
 
     for subscription in subscriptions:
